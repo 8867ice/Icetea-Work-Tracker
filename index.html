@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Icetea's Dashboard">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkljZXRlYSdzIE1hbmFnZXIgRGFzaGJvYXJkIiwKICAic2hvcnRfbmFtZSI6ICJXY3JrIFRyYWNrZXIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiM2NjdlZWEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXlOVFlpSUdobGFXZG9kRDBpTWpVMklqNDhjbVZqZENCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnWm1sc2JEMGlJelkyTjJWbFlTSXZQanh3WVhSb0lHUTlJazB4TWpnZ05qUk1NVFE0SURZMElERTBPQ0F4TkRSTU1USTRJREUwTkVveElpQm1hV3hzUFNJalptWm1JaTgrUEM5emRtYytQQT09IiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <title>Icetea's Manager Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #ffd89b 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f7fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #f093fb;
+            background: white;
+            border-bottom: 3px solid #f093fb;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .add-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .checkbox-label:hover {
+            border-color: #4facfe;
+        }
+        
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .task-list {
+            margin-top: 20px;
+        }
+        
+        .task-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .task-item.completed {
+            opacity: 0.6;
+            background: #f7fafc;
+        }
+        
+        .task-item.overdue {
+            border-color: #fc8181;
+            background: #fff5f5;
+        }
+        
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .task-details {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            color: #718096;
+            margin-top: 10px;
+        }
+        
+        .task-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #edf2f7;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .task-tag.aor {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .task-tag.connection {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .task-tag.reminder {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #f093fb;
+            color: white;
+            border-color: #f093fb;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s;
+        }
+        
+        .cadence-section {
+            background: linear-gradient(135deg, #fff5f7 0%, #fffbea 100%);
+            border: 2px solid #f093fb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .cadence-counter {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #ffd89b;
+            font-weight: 600;
+            font-size: 18px;
+            color: #2d3748;
+            margin-right: 15px;
+        }
+        
+        .cadence-counter.complete {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .quick-add-btn {
+            background: linear-gradient(135deg, #ffd89b 0%, #f5af19 100%);
+            color: #2d3748;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .quick-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 216, 155, 0.4);
+        }
+        
+        .recurring-task {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .recurring-task.ontime {
+            border-left-color: #48bb78;
+        }
+        
+        .recurring-task.soon {
+            border-left-color: #ecc94b;
+            background: #fffbeb;
+        }
+        
+        .recurring-task.late {
+            border-left-color: #ed8936;
+            background: #fffaf0;
+        }
+        
+        .recurring-task.overdue {
+            border-left-color: #f56565;
+            background: #fff5f5;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .cadence-counter {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="installBanner" style="display: none; background: #4299e1; color: white; padding: 15px; text-align: center; font-size: 14px;">
+            📱 <strong>Tap the Share button below, then "Add to Home Screen"</strong> to install this app on your iPhone!
+            <button onclick="document.getElementById('installBanner').style.display='none'" style="margin-left: 10px; padding: 5px 15px; background: white; color: #4299e1; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Got it</button>
+        </div>
+        <div class="header">
+            <h1>📋 Icetea's Manager Dashboard</h1>
+            <p>Store Manager Work Tracker</p>
+            <div style="margin-top: 10px; font-size: 18px; opacity: 0.9;" id="currentDate"></div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">This Week's Tasks</div>
+                    <div class="stat-value" id="weekTasks">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Weekly Completion</div>
+                    <div class="stat-value" id="weeklyCompletionRate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Orchard This Week</div>
+                    <div class="stat-value"><span id="orchardCount">0</span>/15</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Connection Check-ins</div>
+                    <div class="stat-value" id="connectionCount">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('daily')">Today</button>
+            <button class="tab" onclick="switchTab('weekly')">This Week</button>
+            <button class="tab" onclick="switchTab('add')">Add New</button>
+            <button class="tab" onclick="switchTab('all')">All Tasks</button>
+            <button class="tab" onclick="switchTab('monthly')">This Month</button>
+        </div>
+        
+        <div class="content">
+            <!-- Daily Tab -->
+            <div id="daily" class="tab-content active">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">Today's Tasks</h2>
+                
+                <!-- Regular Cadence Section -->
+                <div class="cadence-section">
+                    <h3 style="color: #2d3748; margin-bottom: 15px; font-size: 20px;">⭐ Regular Cadence</h3>
+                    
+                    <!-- Orchard Counter -->
+                    <div style="margin-bottom: 15px;">
+                        <span class="cadence-counter" id="orchardCounter">🍎 Orchard: 0/3 today</span>
+                        <a href="javascript:void(0);" onclick="showQuickOrchardForm(); return false;" style="display: inline-block; background: linear-gradient(135deg, #ffd89b 0%, #f5af19 100%); color: #2d3748; padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; margin-left: 10px;">+ Quick Add</a>
+                    </div>
+                    
+                    <!-- Recurring Tasks -->
+                    <div id="recurringTasksList"></div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterTasks('daily', 'all')">All</button>
+                    <button class="filter-btn" onclick="filterTasks('daily', 'general')">General</button>
+                    <button class="filter-btn" onclick="filterTasks('daily', 'aor')">AOR</button>
+                    <button class="filter-btn" onclick="filterTasks('daily', 'connection')">Connection Team</button>
+                    <button class="filter-btn" onclick="filterTasks('daily', 'orchard')">Orchard</button>
+                    <button class="filter-btn" onclick="filterTasks('daily', 'dna')">DNAs & ID</button>
+                </div>
+                
+                <!-- Incomplete Tasks -->
+                <div>
+                    <h3 style="color: #2d3748; margin: 20px 0 10px 0; font-size: 18px;">📝 To Do</h3>
+                    <div id="dailyProgress">
+                        <div style="font-size: 14px; color: #718096; margin-bottom: 5px;">
+                            <span id="dailyCompleted">0</span> of <span id="dailyTotal">0</span> completed
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dailyProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="task-list" id="dailyTaskList"></div>
+                </div>
+                
+                <!-- Completed Tasks -->
+                <div id="dailyCompletedSection" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+                    <h3 style="color: #2d3748; margin-bottom: 15px; font-size: 18px;">✅ Completed Today</h3>
+                    <div class="task-list" id="dailyCompletedList"></div>
+                </div>
+            </div>
+            
+            <!-- Weekly Tab -->
+            <div id="weekly" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">This Week's Tasks</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterTasks('weekly', 'all')">All</button>
+                    <button class="filter-btn" onclick="filterTasks('weekly', 'general')">General</button>
+                    <button class="filter-btn" onclick="filterTasks('weekly', 'aor')">AOR</button>
+                    <button class="filter-btn" onclick="filterTasks('weekly', 'connection')">Connection Team</button>
+                    <button class="filter-btn" onclick="filterTasks('weekly', 'orchard')">Orchard</button>
+                    <button class="filter-btn" onclick="filterTasks('weekly', 'dna')">DNAs & ID</button>
+                </div>
+                <div id="weeklyProgress">
+                    <div style="font-size: 14px; color: #718096; margin-bottom: 5px;">
+                        <span id="weeklyCompleted">0</span> of <span id="weeklyTotal">0</span> completed
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weeklyProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="task-list" id="weeklyTaskList"></div>
+            </div>
+            
+            <!-- Add New Tab -->
+            <div id="add" class="tab-content">
+                <div class="add-section">
+                    <h2 style="margin-bottom: 20px; color: #2d3748;">Create New Task</h2>
+                    
+                    <div class="form-group">
+                        <label>Task Type</label>
+                        <select id="taskType" onchange="updateFormFields()">
+                            <option value="general">📌 General Reminders</option>
+                            <option value="aor">📊 AOR Work</option>
+                            <option value="connection">🤝 Connection Team</option>
+                            <option value="orchard">🍎 Orchard</option>
+                            <option value="dna">🧬 DNAs & ID Work</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Task Title</label>
+                        <input type="text" id="taskTitle" placeholder="E.g., Check in with John about performance">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Topic (Optional)</label>
+                        <select id="taskTopic">
+                            <option value="">Select topic (optional)</option>
+                            <option value="Performance" data-types="all">Performance</option>
+                            <option value="Attendance" data-types="general,aor,connection,dna">Attendance</option>
+                            <option value="Development" data-types="all">Development</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="taskName" placeholder="E.g., John, Sarah, Maria">
+                    </div>
+                    
+                    <div class="form-group" id="teamMemberGroup">
+                        <label>Team Member Role (Optional)</label>
+                        <select id="teamMember">
+                            <option value="">Select role (optional)</option>
+                            <option value="Genius">Genius</option>
+                            <option value="Genius Admin">Genius Admin</option>
+                            <option value="Pro">Pro</option>
+                            <option value="Expert">Expert</option>
+                            <option value="Technical Expert">Technical Expert</option>
+                            <option value="Specialist">Specialist</option>
+                            <option value="Tech Specialist">Tech Specialist</option>
+                            <option value="Backstage Specialist">Backstage Specialist</option>
+                            <option value="Creative">Creative</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="toolsGroup" style="display: none;">
+                        <label>Tools (Optional)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Orchard"> Orchard
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Email"> Email
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="Workjam"> Workjam
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="connectionFrequencyGroup" style="display: none;">
+                        <label>Connection Frequency</label>
+                        <select id="connectionFrequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="once">One-time</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="taskNotes" placeholder="Additional details, promises made, goals..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+                </div>
+            </div>
+            
+            <!-- All Tasks Tab -->
+            <div id="all" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">All Tasks</h2>
+                
+                <!-- Export Buttons -->
+                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="exportTasks('incomplete')" style="background: #48bb78;">
+                        📥 Export Incomplete Tasks
+                    </button>
+                    <button class="btn btn-primary" onclick="exportTasks('completed')" style="background: #4299e1;">
+                        📥 Export Completed Tasks
+                    </button>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterTasks('all', 'all')">All</button>
+                    <button class="filter-btn" onclick="filterTasks('all', 'active')">Active</button>
+                    <button class="filter-btn" onclick="filterTasks('all', 'completed')">Completed</button>
+                    <button class="filter-btn" onclick="filterTasks('all', 'overdue')">Overdue</button>
+                </div>
+                <div class="task-list" id="allTaskList"></div>
+                
+                <!-- Completed Tasks Summary -->
+                <div id="completedSummary" style="margin-top: 40px; padding-top: 40px; border-top: 2px solid #e2e8f0;">
+                    <h3 style="color: #2d3748; margin-bottom: 20px;">📊 Completed Tasks Summary</h3>
+                    
+                    <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="color: #2d3748; margin-bottom: 15px;">Conversations per Person</h4>
+                        <div id="conversationCounts"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- This Month Tab -->
+            <div id="monthly" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">This Month Summary</h2>
+                
+                <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #2d3748; margin-bottom: 15px;">Completed Tasks by Topic</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0;">
+                            <div style="font-size: 14px; color: #718096; margin-bottom: 5px;">📊 Performance</div>
+                            <div style="font-size: 32px; font-weight: bold; color: #4facfe;" id="performanceCount">0</div>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0;">
+                            <div style="font-size: 14px; color: #718096; margin-bottom: 5px;">📅 Attendance</div>
+                            <div style="font-size: 32px; font-weight: bold; color: #4facfe;" id="attendanceCount">0</div>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #e2e8f0;">
+                            <div style="font-size: 14px; color: #718096; margin-bottom: 5px;">🌱 Development</div>
+                            <div style="font-size: 32px; font-weight: bold; color: #4facfe;" id="developmentCount">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="color: #2d3748; margin-bottom: 15px;">All Tasks This Month</h3>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterTasks('monthly', 'all')">All</button>
+                    <button class="filter-btn" onclick="filterTasks('monthly', 'general')">General</button>
+                    <button class="filter-btn" onclick="filterTasks('monthly', 'aor')">AOR</button>
+                    <button class="filter-btn" onclick="filterTasks('monthly', 'connection')">Connection Team</button>
+                    <button class="filter-btn" onclick="filterTasks('monthly', 'orchard')">Orchard</button>
+                    <button class="filter-btn" onclick="filterTasks('monthly', 'dna')">DNAs & ID</button>
+                </div>
+                <div class="task-list" id="monthlyTaskList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Orchard Modal -->
+    <div id="quickOrchardModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; color: #2d3748;">🍎 Quick Add Orchard</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Name</label>
+                <input type="text" id="quickOrchardName" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Topic</label>
+                <select id="quickOrchardTopic" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                    <option value="">Select topic</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Development">Development</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Subject</label>
+                <input type="text" id="quickOrchardSubject" placeholder="What did you discuss?" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="saveQuickOrchard()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Add</button>
+                <button onclick="closeQuickOrchardModal()" style="flex: 1; padding: 12px; background: #e2e8f0; color: #2d3748; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('workCadenceTasks')) || [];
+        let recurringTasks = JSON.parse(localStorage.getItem('recurringTasks')) || [];
+        let currentFilters = {
+            daily: 'all',
+            weekly: 'all',
+            all: 'all',
+            monthly: 'all'
+        };
+        
+        function showQuickOrchardForm() {
+            document.getElementById('quickOrchardModal').classList.add('show');
+            document.getElementById('quickOrchardName').value = '';
+            document.getElementById('quickOrchardTopic').value = '';
+            document.getElementById('quickOrchardSubject').value = '';
+            document.getElementById('quickOrchardName').focus();
+        }
+        
+        function closeQuickOrchardModal() {
+            document.getElementById('quickOrchardModal').classList.remove('show');
+        }
+        
+        function saveQuickOrchard() {
+            const name = document.getElementById('quickOrchardName').value.trim();
+            const topic = document.getElementById('quickOrchardTopic').value;
+            const subject = document.getElementById('quickOrchardSubject').value.trim();
+            
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
+            
+            if (!topic) {
+                alert('Please select a topic');
+                return;
+            }
+            
+            // Create orchard task
+            const task = {
+                id: Date.now(),
+                title: `Orchard: ${name} - ${topic}${subject ? ' - ' + subject : ''}`,
+                date: new Date().toISOString().split('T')[0],
+                type: 'orchard',
+                notes: subject,
+                name: name,
+                teamMember: '',
+                tools: [],
+                frequency: '',
+                topic: topic,
+                completed: true, // Auto-complete since it just happened
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.push(task);
+            saveTasks();
+            closeQuickOrchardModal();
+            renderAll();
+        }
+        
+        function updateFormFields() {
+            const taskType = document.getElementById('taskType').value;
+            const toolsGroup = document.getElementById('toolsGroup');
+            const connectionFrequencyGroup = document.getElementById('connectionFrequencyGroup');
+            
+            // Reset all optional fields to hidden
+            toolsGroup.style.display = 'none';
+            connectionFrequencyGroup.style.display = 'none';
+            
+            if (taskType === 'aor') {
+                toolsGroup.style.display = 'block';
+            } else if (taskType === 'connection') {
+                connectionFrequencyGroup.style.display = 'block';
+            }
+            
+            // Filter topic options based on task type
+            const topicSelect = document.getElementById('taskTopic');
+            const options = topicSelect.querySelectorAll('option');
+            
+            options.forEach(option => {
+                const allowedTypes = option.getAttribute('data-types');
+                if (!allowedTypes || allowedTypes === 'all') {
+                    option.style.display = '';
+                } else if (taskType === 'orchard') {
+                    // For orchard, hide Attendance
+                    if (option.value === 'Attendance') {
+                        option.style.display = 'none';
+                    } else {
+                        option.style.display = '';
+                    }
+                } else {
+                    option.style.display = '';
+                }
+            });
+            
+            // Reset topic selection if current selection is now hidden
+            if (topicSelect.value && topicSelect.querySelector(`option[value="${topicSelect.value}"]`).style.display === 'none') {
+                topicSelect.value = '';
+            }
+        }
+        
+        function addTask() {
+            const title = document.getElementById('taskTitle').value;
+            const date = document.getElementById('taskDate').value;
+            const type = document.getElementById('taskType').value;
+            const notes = document.getElementById('taskNotes').value;
+            const name = document.getElementById('taskName').value;
+            const teamMember = document.getElementById('teamMember').value;
+            const frequency = document.getElementById('connectionFrequency').value;
+            const topic = document.getElementById('taskTopic').value;
+            
+            if (!title || !date) {
+                alert('Please fill in task title and due date');
+                return;
+            }
+            
+            const tools = [];
+            document.querySelectorAll('#toolsGroup input[type="checkbox"]:checked').forEach(cb => {
+                tools.push(cb.value);
+            });
+            
+            const task = {
+                id: Date.now(),
+                title,
+                date,
+                type,
+                notes,
+                name,
+                teamMember,
+                tools,
+                frequency,
+                topic,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.push(task);
+            saveTasks();
+            
+            // Clear form
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDate').value = '';
+            document.getElementById('taskNotes').value = '';
+            document.getElementById('taskName').value = '';
+            document.getElementById('teamMember').value = '';
+            document.getElementById('taskTopic').value = '';
+            document.querySelectorAll('#toolsGroup input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Reset date to today
+            document.getElementById('taskDate').valueAsDate = new Date();
+            
+            // Switch to appropriate view
+            switchTab('daily');
+            renderAll();
+        }
+        
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                renderAll();
+            }
+        }
+        
+        function deleteTask(id) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveTasks();
+                renderAll();
+            }
+        }
+        
+        function saveTasks() {
+            localStorage.setItem('workCadenceTasks', JSON.stringify(tasks));
+        }
+        
+        function saveRecurringTasks() {
+            localStorage.setItem('recurringTasks', JSON.stringify(recurringTasks));
+        }
+        
+        function updateOrchardCounter() {
+            const today = new Date().toISOString().split('T')[0];
+            const orchardToday = tasks.filter(t => 
+                t.type === 'orchard' && 
+                t.completed && 
+                t.date === today
+            ).length;
+            
+            const counter = document.getElementById('orchardCounter');
+            if (counter) {
+                counter.textContent = `🍎 Orchard: ${orchardToday}/3 today`;
+                if (orchardToday >= 3) {
+                    counter.classList.add('complete');
+                } else {
+                    counter.classList.remove('complete');
+                }
+            }
+        }
+        
+        function exportTasks(type) {
+            const tasksToExport = type === 'incomplete' 
+                ? tasks.filter(t => !t.completed)
+                : tasks.filter(t => t.completed);
+            
+            if (tasksToExport.length === 0) {
+                alert(`No ${type} tasks to export`);
+                return;
+            }
+            
+            // Create CSV content
+            const headers = ['Title', 'Name', 'Role', 'Type', 'Topic', 'Date', 'Notes', 'Tools', 'Frequency', 'Completed'];
+            const csvRows = [headers.join(',')];
+            
+            tasksToExport.forEach(task => {
+                const row = [
+                    `"${(task.title || '').replace(/"/g, '""')}"`,
+                    `"${(task.name || '').replace(/"/g, '""')}"`,
+                    `"${(task.teamMember || '').replace(/"/g, '""')}"`,
+                    `"${(task.type || '').replace(/"/g, '""')}"`,
+                    `"${(task.topic || '').replace(/"/g, '""')}"`,
+                    `"${task.date || ''}"`,
+                    `"${(task.notes || '').replace(/"/g, '""')}"`,
+                    `"${(task.tools || []).join('; ')}"`,
+                    `"${(task.frequency || '').replace(/"/g, '""')}"`,
+                    task.completed ? 'Yes' : 'No'
+                ];
+                csvRows.push(row.join(','));
+            });
+            
+            const csvContent = csvRows.join('\n');
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const date = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${type}_tasks_${date}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function isToday(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            return date.toDateString() === today.toDateString();
+        }
+        
+        function isThisWeek(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            return date >= weekStart && date <= weekEnd;
+        }
+        
+        function isThisMonth(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+        }
+        
+        function isOverdue(dateString) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const date = new Date(dateString);
+            return date < today;
+        }
+        
+        function renderTaskItem(task) {
+            const overdueClass = !task.completed && isOverdue(task.date) ? 'overdue' : '';
+            const completedClass = task.completed ? 'completed' : '';
+            
+            let typeTag = '';
+            let tagClass = '';
+            if (task.type === 'general') {
+                typeTag = '<span class="task-tag">General Reminder</span>';
+            } else if (task.type === 'aor') {
+                typeTag = '<span class="task-tag aor">AOR Work</span>';
+            } else if (task.type === 'connection') {
+                typeTag = '<span class="task-tag connection">Connection Team</span>';
+            } else if (task.type === 'orchard') {
+                typeTag = '<span class="task-tag" style="background: #fef5e7; color: #7d6608;">Orchard</span>';
+            } else if (task.type === 'dna') {
+                typeTag = '<span class="task-tag" style="background: #e8daef; color: #5b2c6f;">DNAs & ID Work</span>';
+            } else if (task.type === 'reminder') {
+                // Legacy support for old reminder type
+                typeTag = '<span class="task-tag">General Reminder</span>';
+            }
+            
+            const toolsDisplay = task.tools && task.tools.length > 0 
+                ? `<div>🛠️ ${task.tools.join(', ')}</div>` 
+                : '';
+            
+            const nameDisplay = task.name 
+                ? `<div style="font-weight: 600; color: #2d3748;">👤 ${task.name}${task.teamMember ? ` (${task.teamMember})` : ''}</div>` 
+                : (task.teamMember ? `<div>👤 ${task.teamMember}</div>` : '');
+            
+            const frequencyDisplay = task.frequency && task.type === 'connection'
+                ? `<div>🔄 ${task.frequency}</div>`
+                : '';
+            
+            const topicDisplay = task.topic
+                ? `<div>📋 ${task.topic}</div>`
+                : '';
+            
+            const dateObj = new Date(task.date);
+            const dateDisplay = dateObj.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+            });
+            
+            return `
+                <div class="task-item ${completedClass} ${overdueClass}">
+                    <div class="task-header">
+                        <input type="checkbox" class="task-checkbox" 
+                               ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id})">
+                        <div class="task-details">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-meta">
+                                <div>📅 ${dateDisplay}</div>
+                                ${nameDisplay}
+                                ${toolsDisplay}
+                                ${frequencyDisplay}
+                                ${topicDisplay}
+                            </div>
+                            ${task.notes ? `<div style="margin-top: 10px; color: #4a5568; font-size: 14px;">📝 ${task.notes}</div>` : ''}
+                            <div style="margin-top: 10px;">
+                                ${typeTag}
+                            </div>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" style="background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 20px;">×</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function filterTasks(view, filter) {
+            currentFilters[view] = filter;
+            
+            // Update filter buttons
+            document.querySelectorAll(`#${view} .filter-btn`).forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderView(view);
+        }
+        
+        function renderView(view) {
+            let filteredTasks = [...tasks];
+            
+            // Apply view filter
+            if (view === 'daily') {
+                filteredTasks = filteredTasks.filter(t => isToday(t.date) || (!t.completed && isOverdue(t.date)));
+            } else if (view === 'weekly') {
+                filteredTasks = filteredTasks.filter(t => isThisWeek(t.date) || (!t.completed && isOverdue(t.date)));
+            } else if (view === 'monthly') {
+                filteredTasks = filteredTasks.filter(t => isThisMonth(t.date));
+            }
+            
+            // Apply type filter
+            const typeFilter = currentFilters[view];
+            if (typeFilter === 'general') {
+                filteredTasks = filteredTasks.filter(t => t.type === 'general' || t.type === 'reminder');
+            } else if (typeFilter === 'aor') {
+                filteredTasks = filteredTasks.filter(t => t.type === 'aor');
+            } else if (typeFilter === 'connection') {
+                filteredTasks = filteredTasks.filter(t => t.type === 'connection');
+            } else if (typeFilter === 'orchard') {
+                filteredTasks = filteredTasks.filter(t => t.type === 'orchard');
+            } else if (typeFilter === 'dna') {
+                filteredTasks = filteredTasks.filter(t => t.type === 'dna');
+            } else if (typeFilter === 'active') {
+                filteredTasks = filteredTasks.filter(t => !t.completed);
+            } else if (typeFilter === 'completed') {
+                filteredTasks = filteredTasks.filter(t => t.completed);
+            } else if (typeFilter === 'overdue') {
+                filteredTasks = filteredTasks.filter(t => !t.completed && isOverdue(t.date));
+            }
+            
+            // For daily view, split into incomplete and completed
+            if (view === 'daily') {
+                const incompleteTasks = filteredTasks.filter(t => !t.completed).sort((a, b) => new Date(a.date) - new Date(b.date));
+                const completedTasks = filteredTasks.filter(t => t.completed).sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                const listElement = document.getElementById('dailyTaskList');
+                const completedListElement = document.getElementById('dailyCompletedList');
+                
+                // Render incomplete tasks
+                if (incompleteTasks.length === 0) {
+                    listElement.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size: 48px;">✨</div>
+                            <h3>No pending tasks</h3>
+                            <p>You're all caught up!</p>
+                        </div>
+                    `;
+                } else {
+                    listElement.innerHTML = incompleteTasks.map(renderTaskItem).join('');
+                }
+                
+                // Render completed tasks
+                if (completedTasks.length === 0) {
+                    completedListElement.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #a0aec0;">
+                            <p>No tasks completed today yet</p>
+                        </div>
+                    `;
+                } else {
+                    completedListElement.innerHTML = completedTasks.map(renderTaskItem).join('');
+                }
+                
+                // Update progress
+                const completed = completedTasks.length;
+                const total = filteredTasks.length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                document.getElementById('dailyCompleted').textContent = completed;
+                document.getElementById('dailyTotal').textContent = total;
+                document.getElementById('dailyProgressBar').style.width = percentage + '%';
+                
+                return;
+            }
+            
+            // Sort by date for other views
+            filteredTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const listElement = document.getElementById(`${view}TaskList`);
+            
+            if (filteredTasks.length === 0) {
+                listElement.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 48px;">✨</div>
+                        <h3>No tasks here</h3>
+                        <p>You're all caught up!</p>
+                    </div>
+                `;
+            } else {
+                listElement.innerHTML = filteredTasks.map(renderTaskItem).join('');
+            }
+            
+            // Update progress for daily and weekly
+            if (view === 'weekly') {
+                const completed = filteredTasks.filter(t => t.completed).length;
+                const total = filteredTasks.length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                document.getElementById(`${view}Completed`).textContent = completed;
+                document.getElementById(`${view}Total`).textContent = total;
+                document.getElementById(`${view}ProgressBar`).style.width = percentage + '%';
+            }
+            
+            // Update topic counts for monthly view
+            if (view === 'monthly') {
+                updateTopicCounts();
+            }
+            
+            // Update conversation counts for all tasks view
+            if (view === 'all') {
+                updateConversationCounts();
+            }
+        }
+        
+        function updateConversationCounts() {
+            const completedTasks = tasks.filter(t => t.completed && t.name);
+            const monthlyCompletedTasks = completedTasks.filter(t => isThisMonth(t.date));
+            
+            // Count by person
+            const personCounts = {};
+            completedTasks.forEach(task => {
+                if (task.name) {
+                    if (!personCounts[task.name]) {
+                        personCounts[task.name] = { total: 0, thisMonth: 0 };
+                    }
+                    personCounts[task.name].total++;
+                    if (isThisMonth(task.date)) {
+                        personCounts[task.name].thisMonth++;
+                    }
+                }
+            });
+            
+            // Sort by total count (highest first)
+            const sortedPeople = Object.entries(personCounts).sort((a, b) => b[1].total - a[1].total);
+            
+            const countsHTML = sortedPeople.length > 0 
+                ? sortedPeople.map(([name, counts]) => `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 2px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: 600; color: #2d3748; font-size: 16px;">👤 ${name}</div>
+                            <div style="display: flex; gap: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 12px; color: #718096;">This Month</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #4facfe;">${counts.thisMonth}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 12px; color: #718096;">Total Ever</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #f093fb;">${counts.total}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')
+                : '<div style="text-align: center; padding: 40px; color: #a0aec0;">No completed tasks with names yet</div>';
+            
+            document.getElementById('conversationCounts').innerHTML = countsHTML;
+        }
+        
+        function updateTopicCounts() {
+            const monthlyCompletedTasks = tasks.filter(t => 
+                t.completed && 
+                isThisMonth(t.date) &&
+                t.topic
+            );
+            
+            const performanceCount = monthlyCompletedTasks.filter(t => t.topic === 'Performance').length;
+            const attendanceCount = monthlyCompletedTasks.filter(t => t.topic === 'Attendance').length;
+            const developmentCount = monthlyCompletedTasks.filter(t => t.topic === 'Development').length;
+            
+            document.getElementById('performanceCount').textContent = performanceCount;
+            document.getElementById('attendanceCount').textContent = attendanceCount;
+            document.getElementById('developmentCount').textContent = developmentCount;
+        }
+        
+        function updateStats() {
+            const weekTasks = tasks.filter(t => isThisWeek(t.date) || (!t.completed && isOverdue(t.date)));
+            const weekCompleted = weekTasks.filter(t => t.completed).length;
+            const weekTotal = weekTasks.length;
+            const weekCompletionRate = weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0;
+            
+            const orchardTasksThisWeek = tasks.filter(t => 
+                t.type === 'orchard' && 
+                t.completed && 
+                isThisWeek(t.date)
+            ).length;
+            
+            const connectionTasksDue = tasks.filter(t => 
+                t.type === 'connection' && 
+                !t.completed &&
+                isThisWeek(t.date)
+            ).length;
+            
+            document.getElementById('weekTasks').textContent = weekTotal;
+            document.getElementById('weeklyCompletionRate').textContent = weekCompletionRate + '%';
+            document.getElementById('orchardCount').textContent = orchardTasksThisWeek;
+            document.getElementById('connectionCount').textContent = connectionTasksDue;
+            
+            // Update current date display
+            const now = new Date();
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = dateString;
+        }
+        
+        function renderAll() {
+            renderView('daily');
+            renderView('weekly');
+            renderView('all');
+            renderView('monthly');
+            updateStats();
+            updateOrchardCounter();
+        }
+        
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // Set today as default date
+        document.getElementById('taskDate').valueAsDate = new Date();
+        
+        // Show install banner if not in standalone mode and haven't seen it
+        if (!window.navigator.standalone && !localStorage.getItem('installBannerSeen')) {
+            document.getElementById('installBanner').style.display = 'block';
+            localStorage.setItem('installBannerSeen', 'true');
+        }
+        
+        // Initialize
+        renderAll();
+    </script>
+</body>
+</html>
