@@ -758,16 +758,23 @@
         localStorage.setItem('iceTeamMembers', JSON.stringify(teamMembers));
     }
     
+    // Get local date string (YYYY-MM-DD) - NOT UTC
+    function getLocalDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return year + '-' + month + '-' + day;
+    }
+    
     // Date helpers
     function isToday(dateString) {
-        const today = new Date();
-        const date = new Date(dateString);
-        return date.toDateString() === today.toDateString();
+        const today = getLocalDateString();
+        return dateString === today;
     }
     
     function isThisWeek(dateString) {
         const today = new Date();
-        const date = new Date(dateString);
+        const taskDate = new Date(dateString + 'T00:00:00'); // Force local timezone
         // Week is Saturday to Friday
         const currentDay = today.getDay();
         const diff = currentDay === 0 ? 1 : currentDay === 6 ? 0 : currentDay + 1;
@@ -777,14 +784,12 @@
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
         weekEnd.setHours(23, 59, 59, 999);
-        return date >= weekStart && date <= weekEnd;
+        return taskDate >= weekStart && taskDate <= weekEnd;
     }
     
     function isOverdue(dateString) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const date = new Date(dateString);
-        return date < today;
+        const today = getLocalDateString();
+        return dateString < today;
     }
     
     // Render task item
@@ -899,7 +904,7 @@
     
     // Update orchard counter
     function updateOrchardCounter() {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         const orchardToday = tasks.filter(t => t.type === 'orchard' && t.date === today);
         const completed = orchardToday.filter(t => t.completed).length;
         const goal = 3;
@@ -923,7 +928,7 @@
     
     // Clear today's orchard tasks (for testing) - ensure global
     window.clearTodayOrchard = function() {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         tasks = tasks.filter(t => !(t.type === 'orchard' && t.date === today));
         saveTasks();
         renderAll();
@@ -1262,7 +1267,7 @@
         tasks.push({
             id: Date.now(),
             title: title,
-            date: new Date().toISOString().split('T')[0],
+            date: getLocalDateString(),
             type: 'orchard',
             topic: topic,
             name: name,
@@ -1310,11 +1315,11 @@
         const list = document.getElementById('monthlyTaskList');
         const now = new Date();
         const monthTasks = tasks.filter(t => {
-            const taskDate = new Date(t.date);
+            const taskDate = new Date(t.date + 'T00:00:00'); // Force local timezone
             return taskDate.getMonth() === now.getMonth() && taskDate.getFullYear() === now.getFullYear();
         });
         
-        monthTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
+        monthTasks.sort((a, b) => new Date(b.date + 'T00:00:00') - new Date(a.date + 'T00:00:00'));
         
         if (monthTasks.length === 0) {
             list.innerHTML = '<div class="empty-state"><div>✨</div><h3>No tasks this month</h3></div>';
@@ -1333,15 +1338,15 @@
             return;
         }
         
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        const start = new Date(startDate + 'T00:00:00'); // Force local timezone
+        const end = new Date(endDate + 'T23:59:59'); // Force local timezone
         
         const quarterTasks = tasks.filter(t => {
-            const taskDate = new Date(t.date);
+            const taskDate = new Date(t.date + 'T00:00:00');
             return taskDate >= start && taskDate <= end;
         });
         
-        quarterTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
+        quarterTasks.sort((a, b) => new Date(b.date + 'T00:00:00') - new Date(a.date + 'T00:00:00'));
         
         if (quarterTasks.length === 0) {
             list.innerHTML = '<div class="empty-state"><div>✨</div><h3>No tasks in this quarter</h3></div>';
