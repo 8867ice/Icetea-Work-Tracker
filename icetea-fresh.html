@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Icetea's Work Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg: #fefbf7;
+            --bg-secondary: #fdf8f3;
+            --text: #4a3728;
+            --text-light: #8b7355;
+            --border: #e8ddd2;
+            --accent: #d4a574;
+            --accent-light: #f0e5d8;
+        }
+        
+        body.dark-mode {
+            --bg: #2b2520;
+            --bg-secondary: #3d3530;
+            --text: #f5e6d3;
+            --text-light: #c9b8a8;
+            --border: #4a413a;
+            --accent: #d4a574;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #fef5f0 0%, #f8f3ee 100%);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+            padding: 15px;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #2b2520 0%, #1f1a15 100%);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-bottom: none;
+            background: linear-gradient(135deg, #d4a574 0%, #e8c4a0 50%, #f0dcc4 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+        }
+        
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            color: var(--text);
+        }
+        
+        .header p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        .dark-mode-toggle {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .dark-mode-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tab:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--accent) 0%, #e8c4a0 100%);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+        }
+        
+        .quick-add {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .quick-btn {
+            padding: 16px 12px;
+            background: var(--bg-secondary);
+            border: 3px solid var(--border);
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .quick-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(212, 165, 116, 0.15);
+            border-color: var(--accent);
+        }
+        
+        .quick-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .task-card {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            border: 2px solid var(--border);
+            display: flex;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .task-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            flex-shrink: 0;
+        }
+        
+        .task-info {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .task-meta {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .task-delete {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        
+        .empty-state div {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .modal-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            color: var(--text);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            transition: border 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #d4a574 0%, #e8c4a0 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212, 165, 116, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .member-item {
+            background: var(--bg-secondary);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .member-info {
+            flex: 1;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+        }
+        
+        .member-detail {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 3px;
+        }
+        
+        .member-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .member-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>📋 Icetea's Dashboard</h1>
+                <p id="weeklyQuote" style="font-style: italic; color: var(--text-light); margin-top: 8px; font-size: 13px;"></p>
+            </div>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('daily')">Today</button>
+            <button class="tab" onclick="switchTab('weekly')">Week</button>
+            <button class="tab" onclick="switchTab('monthly')">Month</button>
+            <button class="tab" onclick="switchTab('quarterly')">Quarter</button>
+            <button class="tab" onclick="switchTab('team')">Team</button>
+            <button class="tab" onclick="switchTab('export')">Export</button>
+        </div>
+        
+        <!-- Quick Add (Daily view) -->
+        <div id="daily" class="content-section active">
+            <div class="quick-add">
+                <button class="quick-btn aor" onclick="openAddModal('aor')">
+                    📌 AOR
+                    <div style="font-size: 11px; margin-top: 4px; opacity: 0.8;">
+                        <span id="aorTodo">0</span> To Do • <span id="aorDone">0</span> Done
+                    </div>
+                </button>
+                <button class="quick-btn orchard" onclick="openAddModal('orchard')">
+                    🍎 Orchard
+                    <div style="font-size: 11px; margin-top: 4px; opacity: 0.8;">
+                        <span id="orchardTodo">0</span> To Do • <span id="orchardDone">0</span> Done
+                    </div>
+                </button>
+                <button class="quick-btn pcn" onclick="openAddModal('pcn')">
+                    📋 PCN
+                    <div style="font-size: 11px; margin-top: 4px; opacity: 0.8;">
+                        <span id="pcnTodo">0</span> To Do • <span id="pcnDone">0</span> Done
+                    </div>
+                </button>
+            </div>
+            <div id="dailyList"></div>
+        </div>
+        
+        <!-- Weekly View -->
+        <div id="weekly" class="content-section">
+            <div class="stats-grid" id="weeklyStats"></div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📌 AOR (<span id="weekAorCount">0</span>)</h3>
+                <div id="weeklyAorList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">🍎 Orchard (<span id="weekOrchardCount">0</span>)</h3>
+                <div id="weeklyOrchardList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📋 PCN (<span id="weekPcnCount">0</span>)</h3>
+                <div id="weeklyPcnList"></div>
+            </div>
+        </div>
+        
+        <!-- Monthly View -->
+        <div id="monthly" class="content-section">
+            <div class="stats-grid" id="monthlyStats"></div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📌 AOR (<span id="monthAorCount">0</span>)</h3>
+                <div id="monthlyAorList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">🍎 Orchard (<span id="monthOrchardCount">0</span>)</h3>
+                <div id="monthlyOrchardList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📋 PCN (<span id="monthPcnCount">0</span>)</h3>
+                <div id="monthlyPcnList"></div>
+            </div>
+        </div>
+        
+        <!-- Quarterly View -->
+        <div id="quarterly" class="content-section">
+            <div class="stats-grid" id="quarterlyStats"></div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📌 AOR (<span id="quarterAorCount">0</span>)</h3>
+                <div id="quarterlyAorList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">🍎 Orchard (<span id="quarterOrchardCount">0</span>)</h3>
+                <div id="quarterlyOrchardList"></div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 12px; font-size: 15px;">📋 PCN (<span id="quarterPcnCount">0</span>)</h3>
+                <div id="quarterlyPcnList"></div>
+            </div>
+        </div>
+        
+        <!-- Team Members -->
+        <div id="team" class="content-section">
+            <button class="btn" onclick="openAddMemberModal()" style="margin-bottom: 20px;">+ Add Team Member</button>
+            <div id="teamList"></div>
+        </div>
+        
+        <!-- Export -->
+        <div id="export" class="content-section">
+            <h3 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 15px;">📥 Export Your Data</h3>
+            <button class="btn" onclick="exportToExcel()" style="margin-bottom: 10px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">📊 Export All Tasks to Excel</button>
+            <button class="btn" onclick="exportTeamMembersToExcel()" style="margin-bottom: 20px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">👥 Export Team Members to Excel</button>
+            
+            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 10px; border: 2px solid var(--border);">
+                <p style="color: var(--text); font-weight: 600; margin-bottom: 12px;">What's included:</p>
+                <ul style="color: var(--text-light); margin-left: 20px; line-height: 1.8; font-size: 13px;">
+                    <li>✓ All tasks (AOR, Orchard, PCN)</li>
+                    <li>✓ Task titles & descriptions</li>
+                    <li>✓ Team member names & roles</li>
+                    <li>✓ Dates & completion status</li>
+                    <li>✓ Reminders & repeat settings</li>
+                    <li>✓ Full task history</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding: 20px; color: var(--text-light); font-size: 13px;">
+        <p>Created by Icey with <span style="color: #ff6b9d; font-size: 15px;">❤️</span></p>
+    </div>
+    
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Task</h2>
+                <button class="modal-close" onclick="closeAddModal()">✕</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Task Title / Subject</label>
+                <input type="text" id="taskTitle" placeholder="e.g., Discussed performance goals, Coached on register...">
+            </div>
+            
+            <div class="form-group">
+                <label>Type</label>
+                <select id="taskType">
+                    <option value="on-floor">On Floor Coaching</option>
+                    <option value="follow-up">Follow-up</option>
+                    <option value="recognition">Recognition</option>
+                    <option value="attendance">Attendance Check</option>
+                    <option value="correction">Correction/Development</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="pcnTypes" style="display: none;">
+                <label>Type</label>
+                <select id="taskType">
+                    <option value="performance">Performance</option>
+                    <option value="attendance">Attendance</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Team Member</label>
+                <input type="text" id="taskMember" list="memberList" placeholder="Name..." onchange="autoFillRole()">
+                <datalist id="memberList"></datalist>
+            </div>
+            
+            <div class="form-group">
+                <label>Role</label>
+                <input type="text" id="taskRole" placeholder="Auto-filled if saved" readonly style="opacity: 0.7;">
+            </div>
+            
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="taskDate">
+            </div>
+            
+            <div class="form-group" id="orchardCheckboxGroup" style="display: none;">
+                <label style="display: flex; align-items: center;">
+                    <input type="checkbox" id="taskAlsoOrchard" style="width: 18px; height: 18px; margin-right: 8px;">
+                    <span>Also log as Orchard?</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>Notes / Details</label>
+                <textarea id="taskNotes" placeholder="What happened?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Set Follow-up Reminder (Optional)</label>
+                <input type="date" id="taskReminder" placeholder="First follow-up date">
+            </div>
+            
+            <div class="form-group">
+                <label>Repeat?</label>
+                <select id="taskRepeat">
+                    <option value="none">No Repeat (One time)</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Every 2 Weeks (Bi-weekly)</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="saveTask()">✓ Save</button>
+            <button onclick="closeAddModal()" style="width: 100%; padding: 12px; background: var(--bg-secondary); color: var(--text); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Team Member</h2>
+                <button class="modal-close" onclick="closeAddMemberModal()">✕</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="memberName" placeholder="Team member name">
+            </div>
+            
+            <div class="form-group">
+                <label>Role (Optional)</label>
+                <input type="text" id="memberRole" placeholder="e.g., Specialist">
+            </div>
+            
+            <button class="btn" onclick="saveMember()">✓ Add</button>
+            <button onclick="closeAddMemberModal()" style="width: 100%; padding: 12px; background: var(--bg-secondary); color: var(--text); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Member Details Modal -->
+    <div id="memberDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Team Member Details</h2>
+                <button class="modal-close" onclick="closeMemberDetails()">✕</button>
+            </div>
+            <div id="memberDetailsContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let teamMembers = JSON.parse(localStorage.getItem('teamMembers')) || [];
+        let currentCategory = null;
+        
+        const weeklyQuotes = [
+            "Your team sees your commitment every day.",
+            "Small actions create big impact.",
+            "Leadership is showing up when it matters.",
+            "Every conversation is an opportunity to inspire.",
+            "You're building more than tasks—you're building people.",
+            "Progress over perfection.",
+            "Your effort today shapes your team's tomorrow.",
+            "Listen more, lead better.",
+            "Celebrate the small wins—they add up.",
+            "Great managers invest in people, not just tasks.",
+            "You've got this, and your team knows it.",
+            "Focus on what you can control today.",
+            "Your presence matters more than you think.",
+            "Build trust through consistency.",
+            "Every team member has potential—help them see it.",
+            "One conversation at a time, you're making a difference.",
+            "Stay calm, stay focused, stay human.",
+            "Your growth inspires theirs.",
+            "Lead with compassion, manage with clarity.",
+            "This week you'll make a difference—you always do.",
+            "Be the leader you needed when you were starting out.",
+            "Your consistency builds their confidence.",
+            "Recognize effort—results follow.",
+            "You're not just managing work, you're developing people.",
+            "This is your week to shine and help others shine too.",
+            "Keep it simple, keep it real, keep it moving.",
+            "You're capable of more than you think.",
+            "Your team is watching—show them what excellence looks like.",
+            "Growth happens in conversation.",
+            "Stay present, stay purposeful, stay kind."
+        ];
+        
+        function getWeekNumber() {
+            const d = new Date();
+            const firstDay = new Date(d.getFullYear(), 0, 1);
+            const pastDaysOfYear = (d - firstDay) / 86400000;
+            return Math.ceil((pastDaysOfYear + firstDay.getDay() + 1) / 7);
+        }
+        
+        function setWeeklyQuote() {
+            const weekNum = getWeekNumber();
+            const quote = weeklyQuotes[weekNum % weeklyQuotes.length];
+            document.getElementById('weeklyQuote').textContent = `"${quote}"`;
+        }
+        
+        function getToday() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        
+        function getWeekStart() {
+            const d = new Date();
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+        
+        function getMonthStart() {
+            const d = new Date();
+            return new Date(d.getFullYear(), d.getMonth(), 1);
+        }
+        
+        function getQuarterStart() {
+            const d = new Date();
+            const q = Math.floor(d.getMonth() / 3);
+            return new Date(d.getFullYear(), q * 3, 1);
+        }
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            renderAll();
+        }
+        
+        function openAddModal(category) {
+            currentCategory = category;
+            document.getElementById('modalTitle').textContent = `Add ${category.toUpperCase()}`;
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDate').valueAsDate = new Date();
+            document.getElementById('taskMember').value = '';
+            document.getElementById('taskRole').value = '';
+            document.getElementById('taskNotes').value = '';
+            document.getElementById('taskReminder').value = '';
+            document.getElementById('taskRepeat').value = 'none';
+            document.getElementById('taskAlsoOrchard').checked = false;
+            
+            // Show/hide Orchard checkbox for AOR
+            const orchardGroup = document.getElementById('orchardCheckboxGroup');
+            if (category === 'aor') {
+                orchardGroup.style.display = 'block';
+            } else {
+                orchardGroup.style.display = 'none';
+            }
+            
+            // Show/hide PCN type options
+            const pcnTypes = document.getElementById('pcnTypes');
+            const regularTypes = document.querySelector('[id="taskType"]:not(#pcnTypes select)');
+            
+            if (category === 'pcn') {
+                regularTypes.style.display = 'none';
+                pcnTypes.style.display = 'block';
+                pcnTypes.querySelector('select').value = 'performance';
+            } else {
+                regularTypes.style.display = 'block';
+                pcnTypes.style.display = 'none';
+                regularTypes.value = 'on-floor';
+            }
+            
+            document.getElementById('addTaskModal').classList.add('show');
+        }
+        
+        function closeAddModal() {
+            document.getElementById('addTaskModal').classList.remove('show');
+            currentEditingTaskId = null;
+        }
+        
+        function autoFillRole() {
+            const memberName = document.getElementById('taskMember').value.trim();
+            const member = teamMembers.find(m => m.name === memberName);
+            if (member && member.role) {
+                document.getElementById('taskRole').value = member.role;
+            } else {
+                document.getElementById('taskRole').value = '';
+            }
+        }
+        
+        let currentEditingTaskId = null;
+        
+        function editTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            
+            currentEditingTaskId = id;
+            currentCategory = task.category;
+            
+            document.getElementById('modalTitle').textContent = `Edit Task`;
+            document.getElementById('taskTitle').value = task.title || '';
+            document.getElementById('taskDate').value = task.date;
+            document.getElementById('taskMember').value = task.member;
+            document.getElementById('taskRole').value = task.role || '';
+            document.getElementById('taskNotes').value = task.notes || '';
+            document.getElementById('taskReminder').value = task.reminder || '';
+            document.getElementById('taskRepeat').value = task.repeat || 'none';
+            document.getElementById('taskAlsoOrchard').checked = task.alsoOrchard || false;
+            
+            // Show/hide Orchard checkbox for AOR
+            const orchardGroup = document.getElementById('orchardCheckboxGroup');
+            if (task.category === 'aor') {
+                orchardGroup.style.display = 'block';
+            } else {
+                orchardGroup.style.display = 'none';
+            }
+            
+            // Show/hide PCN type options
+            const pcnTypes = document.getElementById('pcnTypes');
+            const regularTypes = document.querySelector('[id="taskType"]:not(#pcnTypes select)');
+            
+            if (task.category === 'pcn') {
+                regularTypes.style.display = 'none';
+                pcnTypes.style.display = 'block';
+                pcnTypes.querySelector('select').value = task.type;
+            } else {
+                regularTypes.style.display = 'block';
+                pcnTypes.style.display = 'none';
+                regularTypes.value = task.type;
+            }
+            
+            document.getElementById('addTaskModal').classList.add('show');
+        }
+        
+        function saveTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const type = document.getElementById('taskType').value;
+            const member = document.getElementById('taskMember').value.trim();
+            const role = document.getElementById('taskRole').value.trim();
+            const date = document.getElementById('taskDate').value;
+            const notes = document.getElementById('taskNotes').value.trim();
+            const reminder = document.getElementById('taskReminder').value;
+            const repeat = document.getElementById('taskRepeat').value;
+            const alsoOrchard = document.getElementById('taskAlsoOrchard').checked;
+            
+            if (!member || !date || !title) {
+                alert('Please fill in member, date, and title');
+                return;
+            }
+            
+            if (currentEditingTaskId) {
+                // Update existing task
+                const taskIndex = tasks.findIndex(t => t.id === currentEditingTaskId);
+                if (taskIndex !== -1) {
+                    tasks[taskIndex] = {
+                        id: currentEditingTaskId,
+                        title,
+                        category: currentCategory,
+                        type,
+                        member,
+                        role: role || '',
+                        date,
+                        notes,
+                        reminder: reminder || null,
+                        repeat: repeat || 'none',
+                        alsoOrchard: alsoOrchard && currentCategory === 'aor' && type === 'on-floor',
+                        completed: tasks[taskIndex].completed
+                    };
+                }
+                currentEditingTaskId = null;
+            } else {
+                // Create new task
+                const taskObj = {
+                    id: Date.now(),
+                    title,
+                    category: currentCategory,
+                    type,
+                    member,
+                    role: role || '',
+                    date,
+                    notes,
+                    reminder: reminder || null,
+                    repeat: repeat || 'none',
+                    alsoOrchard: alsoOrchard && currentCategory === 'aor' && type === 'on-floor',
+                    completed: false
+                };
+                tasks.push(taskObj);
+            }
+            
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            closeAddModal();
+            renderAll();
+        }
+        
+        function openAddMemberModal() {
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberRole').value = '';
+            document.getElementById('addMemberModal').classList.add('show');
+        }
+        
+        function closeAddMemberModal() {
+            document.getElementById('addMemberModal').classList.remove('show');
+        }
+        
+        function saveMember() {
+            const name = document.getElementById('memberName').value.trim();
+            if (!name) {
+                alert('Please enter name');
+                return;
+            }
+            
+            const role = document.getElementById('memberRole').value.trim();
+            teamMembers.push({
+                id: Date.now(),
+                name,
+                role,
+                lastSeen: null,
+                lastType: null
+            });
+            
+            localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+            closeAddMemberModal();
+            renderAll();
+        }
+        
+        function deleteMember(id) {
+            teamMembers = teamMembers.filter(m => m.id !== id);
+            localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+            renderAll();
+        }
+        
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderAll();
+        }
+        
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderAll();
+            }
+        }
+        
+        function renderTaskList(selector, tasksToShow) {
+            const html = tasksToShow.length > 0
+                ? tasksToShow.map(t => {
+                    let reminderText = '';
+                    if (t.reminder && t.repeat !== 'none') {
+                        reminderText = ` • 🔔 ${t.reminder} (${t.repeat})`;
+                    } else if (t.reminder) {
+                        reminderText = ` • 🔔 ${t.reminder}`;
+                    }
+                    const orchardIndicator = t.alsoOrchard ? ' 🍎' : '';
+                    return `
+                    <div class="task-card">
+                        <input type="checkbox" class="task-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask(${t.id})">
+                        <div class="task-info">
+                            <div class="task-title">${t.title || 'Untitled'}</div>
+                            <div class="task-meta">${t.category.toUpperCase()} • ${t.type} • ${t.member}${t.role ? ' (' + t.role + ')' : ''}${orchardIndicator} • ${t.date}${reminderText}</div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-shrink: 0;">
+                            <button class="task-delete" onclick="editTask(${t.id})" style="color: var(--accent);">✎</button>
+                            <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
+                        </div>
+                    </div>
+                `;
+                }).join('')
+                : '<div class="empty-state"><div>✨</div><p>No tasks</p></div>';
+            
+            document.querySelector(selector).innerHTML = html;
+        }
+        
+        function renderDaily() {
+            const today = getToday();
+            const todayTasks = tasks.filter(t => t.date === today).sort((a, b) => new Date(b.date) - new Date(a.date));
+            renderTaskList('#dailyList', todayTasks);
+            
+            // Count tasks by category
+            const aorTasks = getTasks('aor').filter(t => t.date === today);
+            const orchardTasks = getTasks('orchard').filter(t => t.date === today);
+            const pcnTasks = getTasks('pcn').filter(t => t.date === today);
+            
+            document.getElementById('aorTodo').textContent = aorTasks.filter(t => !t.completed).length;
+            document.getElementById('aorDone').textContent = aorTasks.filter(t => t.completed).length;
+            
+            document.getElementById('orchardTodo').textContent = orchardTasks.filter(t => !t.completed).length;
+            document.getElementById('orchardDone').textContent = orchardTasks.filter(t => t.completed).length;
+            
+            document.getElementById('pcnTodo').textContent = pcnTasks.filter(t => !t.completed).length;
+            document.getElementById('pcnDone').textContent = pcnTasks.filter(t => t.completed).length;
+        }
+        
+        function getTasks(categoryFilter) {
+            return tasks.filter(t => {
+                // Include if category matches
+                if (t.category === categoryFilter) return true;
+                // Include in Orchard tab if it's an AOR task marked as also Orchard
+                if (categoryFilter === 'orchard' && t.category === 'aor' && t.alsoOrchard) return true;
+                return false;
+            });
+        }
+        
+        function renderWeekly() {
+            const weekStart = getWeekStart();
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            const aorTasks = getTasks('aor').filter(t => {
+                const d = new Date(t.date);
+                return d >= weekStart && d <= weekEnd;
+            });
+            const orchardTasks = getTasks('orchard').filter(t => {
+                const d = new Date(t.date);
+                return d >= weekStart && d <= weekEnd;
+            });
+            const pcnTasks = getTasks('pcn').filter(t => {
+                const d = new Date(t.date);
+                return d >= weekStart && d <= weekEnd;
+            });
+            
+            const aor = aorTasks.length;
+            const orchard = orchardTasks.length;
+            const pcn = pcnTasks.length;
+            const allTasks = aorTasks.concat(orchardTasks, pcnTasks);
+            
+            document.getElementById('weeklyStats').innerHTML = `
+                <div class="stat-box"><div class="stat-number">${aor}</div><div class="stat-label">AOR</div></div>
+                <div class="stat-box"><div class="stat-number">${orchard}</div><div class="stat-label">Orchard</div></div>
+                <div class="stat-box"><div class="stat-number">${pcn}</div><div class="stat-label">PCN</div></div>
+                <div class="stat-box"><div class="stat-number">${allTasks.length}</div><div class="stat-label">Total</div></div>
+            `;
+            
+            document.getElementById('weekAorCount').textContent = aor;
+            document.getElementById('weekOrchardCount').textContent = orchard;
+            document.getElementById('weekPcnCount').textContent = pcn;
+            
+            renderTaskList('#weeklyAorList', aorTasks);
+            renderTaskList('#weeklyOrchardList', orchardTasks);
+            renderTaskList('#weeklyPcnList', pcnTasks);
+        }
+        
+        function renderMonthly() {
+            const monthStart = getMonthStart();
+            const monthEnd = new Date(monthStart);
+            monthEnd.setMonth(monthEnd.getMonth() + 1);
+            
+            const aorTasks = getTasks('aor').filter(t => {
+                const d = new Date(t.date);
+                return d >= monthStart && d < monthEnd;
+            });
+            const orchardTasks = getTasks('orchard').filter(t => {
+                const d = new Date(t.date);
+                return d >= monthStart && d < monthEnd;
+            });
+            const pcnTasks = getTasks('pcn').filter(t => {
+                const d = new Date(t.date);
+                return d >= monthStart && d < monthEnd;
+            });
+            
+            const allTasks = aorTasks.concat(orchardTasks, pcnTasks);
+            
+            const typeStats = {};
+            allTasks.forEach(t => {
+                typeStats[t.type] = (typeStats[t.type] || 0) + 1;
+            });
+            
+            document.getElementById('monthlyStats').innerHTML = `
+                <div class="stat-box"><div class="stat-number">${aorTasks.length}</div><div class="stat-label">AOR</div></div>
+                <div class="stat-box"><div class="stat-number">${orchardTasks.length}</div><div class="stat-label">Orchard</div></div>
+                <div class="stat-box"><div class="stat-number">${pcnTasks.length}</div><div class="stat-label">PCN</div></div>
+                <div class="stat-box"><div class="stat-number">${typeStats['on-floor'] || 0}</div><div class="stat-label">Coaching</div></div>
+                <div class="stat-box"><div class="stat-number">${typeStats['recognition'] || 0}</div><div class="stat-label">Recognition</div></div>
+                <div class="stat-box"><div class="stat-number">${typeStats['follow-up'] || 0}</div><div class="stat-label">Follow-up</div></div>
+                <div class="stat-box"><div class="stat-number">${typeStats['attendance'] || 0}</div><div class="stat-label">Attendance</div></div>
+                <div class="stat-box"><div class="stat-number">${allTasks.length}</div><div class="stat-label">Total</div></div>
+            `;
+            
+            document.getElementById('monthAorCount').textContent = aorTasks.length;
+            document.getElementById('monthOrchardCount').textContent = orchardTasks.length;
+            document.getElementById('monthPcnCount').textContent = pcnTasks.length;
+            
+            renderTaskList('#monthlyAorList', aorTasks);
+            renderTaskList('#monthlyOrchardList', orchardTasks);
+            renderTaskList('#monthlyPcnList', pcnTasks);
+        }
+        
+        function renderQuarterly() {
+            const quarterStart = getQuarterStart();
+            const quarterEnd = new Date(quarterStart);
+            quarterEnd.setMonth(quarterEnd.getMonth() + 3);
+            
+            const aorTasks = getTasks('aor').filter(t => {
+                const d = new Date(t.date);
+                return d >= quarterStart && d < quarterEnd;
+            });
+            const orchardTasks = getTasks('orchard').filter(t => {
+                const d = new Date(t.date);
+                return d >= quarterStart && d < quarterEnd;
+            });
+            const pcnTasks = getTasks('pcn').filter(t => {
+                const d = new Date(t.date);
+                return d >= quarterStart && d < quarterEnd;
+            });
+            
+            const allTasks = aorTasks.concat(orchardTasks, pcnTasks);
+            
+            const types = {};
+            allTasks.forEach(t => {
+                types[t.type] = (types[t.type] || 0) + 1;
+            });
+            
+            document.getElementById('quarterlyStats').innerHTML = `
+                <div class="stat-box"><div class="stat-number">${aorTasks.length}</div><div class="stat-label">AOR</div></div>
+                <div class="stat-box"><div class="stat-number">${orchardTasks.length}</div><div class="stat-label">Orchard</div></div>
+                <div class="stat-box"><div class="stat-number">${pcnTasks.length}</div><div class="stat-label">PCN</div></div>
+                <div class="stat-box"><div class="stat-number">${types['on-floor'] || 0}</div><div class="stat-label">Coaching</div></div>
+                <div class="stat-box"><div class="stat-number">${types['recognition'] || 0}</div><div class="stat-label">Recognition</div></div>
+                <div class="stat-box"><div class="stat-number">${types['follow-up'] || 0}</div><div class="stat-label">Follow-up</div></div>
+                <div class="stat-box"><div class="stat-number">${types['attendance'] || 0}</div><div class="stat-label">Attendance</div></div>
+                <div class="stat-box"><div class="stat-number">${allTasks.length}</div><div class="stat-label">Total</div></div>
+            `;
+            
+            document.getElementById('quarterAorCount').textContent = aorTasks.length;
+            document.getElementById('quarterOrchardCount').textContent = orchardTasks.length;
+            document.getElementById('quarterPcnCount').textContent = pcnTasks.length;
+            
+            renderTaskList('#quarterlyAorList', aorTasks);
+            renderTaskList('#quarterlyOrchardList', orchardTasks);
+            renderTaskList('#quarterlyPcnList', pcnTasks);
+        }
+        
+        function renderTeamMembers() {
+            const html = teamMembers.map(m => {
+                const memberTasks = tasks.filter(t => t.member === m.name && t.completed);
+                
+                // Count task types
+                const pcnPerformance = memberTasks.filter(t => t.type === 'performance').length;
+                const pcnAttendance = memberTasks.filter(t => t.type === 'attendance').length;
+                const recognition = memberTasks.filter(t => t.type === 'recognition').length;
+                const orchard = getTasks('orchard').filter(t => t.member === m.name && t.completed).length;
+                
+                return `
+                    <div class="member-item" onclick="showMemberDetails('${m.name}')" style="cursor: pointer; flex-direction: column; align-items: flex-start;">
+                        <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <div class="member-info">
+                                <div class="member-name">${m.name}</div>
+                                <div class="member-detail">${m.role || 'No role'}</div>
+                            </div>
+                            <button class="member-btn" onclick="event.stopPropagation(); deleteMember(${m.id})">✕</button>
+                        </div>
+                        <div style="width: 100%; font-size: 12px; color: var(--text-light); line-height: 1.6; background: var(--bg-secondary); padding: 10px; border-radius: 8px;">
+                            📊 PCN Performance: <span style="font-weight: 600; color: var(--accent);">${pcnPerformance}</span><br>
+                            📌 PCN Attendance: <span style="font-weight: 600; color: var(--accent);">${pcnAttendance}</span><br>
+                            ⭐ Recognition: <span style="font-weight: 600; color: var(--accent);">${recognition}</span><br>
+                            🍎 Orchard: <span style="font-weight: 600; color: var(--accent);">${orchard}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('teamList').innerHTML = html || '<div class="empty-state"><p>No team members yet</p></div>';
+        }
+        
+        function showMemberDetails(memberName) {
+            const member = teamMembers.find(m => m.name === memberName);
+            const memberTasks = tasks.filter(t => t.member === memberName).sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let detailsHtml = `
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border);">
+                    <h2 style="font-family: 'Poppins', sans-serif; color: var(--text); margin-bottom: 10px; font-size: 20px;">${memberName}</h2>
+                    <div style="font-size: 13px; color: var(--text-light);">
+                        ${member.role ? 'Role: ' + member.role + '<br>' : ''}
+                        Total Interactions: ${memberTasks.length}
+                    </div>
+                </div>
+            `;
+            
+            if (memberTasks.length > 0) {
+                detailsHtml += memberTasks.map(t => {
+                    let reminderText = '';
+                    if (t.reminder && t.repeat !== 'none') {
+                        reminderText = ` • 🔔 ${t.reminder} (${t.repeat})`;
+                    } else if (t.reminder) {
+                        reminderText = ` • 🔔 ${t.reminder}`;
+                    }
+                    const completedBadge = t.completed ? '<span style="color: #10b981; font-weight: 600;">✓</span>' : '<span style="color: #f97316; font-weight: 600;">○</span>';
+                    const orchardIndicator = t.alsoOrchard ? ' 🍎' : '';
+                    return `
+                        <div style="background: var(--bg-secondary); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--accent);">
+                            <div style="font-weight: 600; color: var(--text); margin-bottom: 4px;">${completedBadge} ${t.title}</div>
+                            <div style="font-size: 12px; color: var(--text-light);">
+                                ${t.category.toUpperCase()} • ${t.type}${orchardIndicator} • ${t.date}${reminderText}
+                            </div>
+                            ${t.notes ? '<div style="font-size: 12px; color: var(--text-light); margin-top: 6px; font-style: italic;">📝 ' + t.notes + '</div>' : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                detailsHtml += '<div class="empty-state"><div style="font-size: 32px; margin-bottom: 8px;">✨</div><p>No tasks with this team member yet</p></div>';
+            }
+            
+            document.getElementById('memberDetailsContent').innerHTML = detailsHtml;
+            document.getElementById('memberDetailsModal').classList.add('show');
+        }
+        
+        function closeMemberDetails() {
+            document.getElementById('memberDetailsModal').classList.remove('show');
+        }
+        
+        function updateMemberList() {
+            const memberList = document.getElementById('memberList');
+            memberList.innerHTML = teamMembers.map(m => `<option value="${m.name}">`).join('');
+        }
+        
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Prepare tasks data
+            const taskData = tasks.map(t => ({
+                'Date': t.date,
+                'Category': t.category.toUpperCase(),
+                'Type': t.type,
+                'Title': t.title || '',
+                'Team Member': t.member,
+                'Role': t.role || '',
+                'Status': t.completed ? 'Done' : 'To Do',
+                'Also Orchard': t.alsoOrchard ? 'Yes' : 'No',
+                'Reminder': t.reminder || '',
+                'Repeat': t.repeat || 'None',
+                'Notes': t.notes || ''
+            })).sort((a, b) => new Date(b.Date) - new Date(a.Date));
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(taskData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Tasks');
+            
+            // Download file
+            const today = getToday();
+            XLSX.writeFile(wb, `Icetea_Tasks_${today}.xlsx`);
+        }
+        
+        function exportTeamMembersToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Prepare team members data
+            const memberData = teamMembers.map(m => {
+                const memberTasks = tasks.filter(t => t.member === m.name && t.completed);
+                const pcnPerformance = memberTasks.filter(t => t.type === 'performance').length;
+                const pcnAttendance = memberTasks.filter(t => t.type === 'attendance').length;
+                const recognition = memberTasks.filter(t => t.type === 'recognition').length;
+                const orchard = getTasks('orchard').filter(t => t.member === m.name && t.completed).length;
+                
+                return {
+                    'Name': m.name,
+                    'Role': m.role || '',
+                    'Total Interactions': memberTasks.length,
+                    'PCN Performance': pcnPerformance,
+                    'PCN Attendance': pcnAttendance,
+                    'Recognition': recognition,
+                    'Orchard': orchard
+                };
+            });
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(memberData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Team Members');
+            
+            // Download file
+            const today = getToday();
+            XLSX.writeFile(wb, `Icetea_TeamMembers_${today}.xlsx`);
+        }
+        
+        function renderAll() {
+            updateMemberList();
+            renderDaily();
+            renderWeekly();
+            renderMonthly();
+            renderQuarterly();
+            renderTeamMembers();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+            document.getElementById('taskDate').valueAsDate = new Date();
+            setWeeklyQuote();
+            renderAll();
+        });
+    </script>
+</body>
+</html>
